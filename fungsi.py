@@ -1,4 +1,5 @@
 # S-Box untuk F0
+import galois
 S0 = [0x57, 0x49, 0xd1, 0xc6, 0x2f, 0x33, 0x74, 0xfb,
       0x95, 0x6d, 0x82, 0xea, 0x0e, 0xb0, 0xa8, 0x1c,
       0x28, 0xd0, 0x4b, 0x92, 0x5c, 0xee, 0x85, 0xb1,
@@ -80,7 +81,6 @@ M1 = [0x01, 0x08, 0x02, 0x0a,
       0x02, 0x0a, 0x01, 0x08,
       0x0a, 0x02, 0x08, 0x01]
 
-
 # Constant Value
 con128 = [0xf56b7aeb, 0x994a8a42, 0x96a4bd75, 0xfa854521,
           0x735b768a, 0x1f7abac4, 0xd5bc3b45, 0xb99d5d62,
@@ -99,7 +99,7 @@ con128 = [0xf56b7aeb, 0x994a8a42, 0x96a4bd75, 0xfa854521,
           0x50b63150, 0x3c9757e7, 0x1052b098, 0x7c73b3a7]
 
 
-def m1_func(T0, T1, T2, T3):
+def m0_func(T0, T1, T2, T3):
     y0 = T0 ^ (0x02 * T1) ^ (0X04 * T2) ^ (0X06 * T3)
     y1 = (0X02 * T0) ^ (T1) ^ (0X06 * T2) ^ (0X04 * T3)
     y2 = (0X04 * T0) ^ (0X06 * T1) ^ (T2) ^ (0X02 * T3)
@@ -108,34 +108,72 @@ def m1_func(T0, T1, T2, T3):
 
 
 def m1_func(T0, T1, T2, T3):
-    y0 = T0 ^ (0x08 * T1) ^ (0x02 * T2) ^ (0x0a * T3)
-    y1 = (0x08 * T0) ^ T1 ^ (0x0a * T2) ^ (0x02 * T3)
-    y2 = (0x02 * T0) ^ (0x0a * T1) ^ T2 ^ (0x08 * T3)
-    y3 = (0x0a * T0) ^ (0x02 * T1) ^ (0x08 * T2) ^ T3
+    y0 = T0 ^ (0x08 & T1) ^ (0x02 & T2) ^ (0x0a & T3)
+    y1 = (0x08 & T0) ^ T1 ^ (0x0a & T2) ^ (0x02 & T3)
+    y2 = (0x02 & T0) ^ (0x0a & T1) ^ T2 ^ (0x08 & T3)
+    y3 = (0x0a & T0) ^ (0x02 & T1) ^ (0x08 & T2) ^ T3
     return y0, y1, y2, y3
 
 # -------------------------------------------------------------------------------------------
-def gFn(state, pre_state):
+# def gFn(state, pre_state):        # gfn irreducible -> untuk AES
+#     p = 0
+#     hiBitSet = 0
+#     for i in range(8):
+#         if pre_state & 1 == 1:
+#             p ^= state
+#         hiBitSet = state & 0x80
+#         state <<= 1
+#         if hiBitSet == 0x80:
+#             state ^= 0x1b
+#         pre_state >>= 1
+#     return p % 256
+
+
+# def gFn(a, b):          # gfn irreducible -> untuk AES
+#     sum = 0
+#     while (b > 0):
+#         if (b & 1):
+#             sum ^= a
+#         b >>= 1
+#         a <<= 1
+#         if (a & 0x100):
+#             a ^= 0x11B
+#     return sum
+
+
+# def gFn(state, prev_matrix):      # gfn primitive -> untuk CLEFIA (import galois)
+#     GFN = galois.GF(2**8)
+#     x = GFN(state)
+#     y = GFN(prev_matrix)
+#     return x * y
+
+# -------------------------------------------------------------------------------------------
+
+def gFn(state, pre_matrix):     # gfn primitive -> untuk CLEFIA
     p = 0
-    hiBitSet = 0
-    for i in range(8):
-        if pre_state & 1 == 1:
+    while pre_matrix:
+        if pre_matrix & 0b1:
             p ^= state
-        hiBitSet = state & 0x80
         state <<= 1
-        if hiBitSet == 0x80:
-            state ^= 0x1b
-        pre_state >>= 1
-    return p % 256
+        if state & 0x100:
+            state ^= 0b11101
+        pre_matrix >>= 1
+    return p & 0xff
+
+
+# untuk M0
+def m0_mix(state):
+    hasil_GFN = []
+    for i in range(4):
+        hasil_GFN.append(gFn(state[0], M0[i*4]) ^ gFn(state[1], M0[i*4 + 1]) ^ gFn(
+            state[2], M0[i*4 + 2]) ^ gFn(state[3], M0[i*4 + 3]))
+    return hasil_GFN
 
 
 # untuk M1
 def m1_mix(state):
-    hasil_mix_column = []
-    for x in range(4):
-        for i in range(4):
-            hasil_mix_column.append(gFn(state[x*4], M1[i*4]) ^ gFn(state[x*4 + 1], M1[i*4 + 1]) ^ gFn(state[x*4 + 2], M1[i*4 + 2]) ^ gFn(state[x*4 + 3], M1[i*4 + 3]))
-    return hasil_mix_column
-
-
-inputan_m1 = [119, 125, 232, 232]
+    hasil_GFN = []
+    for i in range(4):
+        hasil_GFN.append(gFn(state[0], M1[i*4]) ^ gFn(state[1], M1[i*4 + 1]) ^ gFn(
+            state[2], M1[i*4 + 2]) ^ gFn(state[3], M1[i*4 + 3]))
+    return hasil_GFN
