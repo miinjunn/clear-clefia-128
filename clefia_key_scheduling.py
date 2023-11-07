@@ -42,6 +42,9 @@ for i in range(4):
 
 x0, x1, x2, x3 = k_as_input
 print(f"x0: {x0}")
+print(f"x1: {x1}")
+print(f"x2: {x2}")
+print(f"x3: {x3}")
 
 
 # ----------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ def gFn4_12(inp0, inp1, inp2, inp3):
     x1 = inp1
     x2 = inp2
     x3 = inp3
-    for i in range(1):
+    for i in range(12):
 
         x1 = xor_(x1, (f0(x0, con_128[2*i])))
 
@@ -85,7 +88,7 @@ def gFn4_12(inp0, inp1, inp2, inp3):
 
 
 l0, l1, l2, l3 = gFn4_12(x0, x1, x2, x3)
-fin = l0 + l1 + l2 + l3
+fin = l3 + l0 + l1 + l2                     # disusun spt ini karena pada round-12 tidak ada swap
 fin_hex = [hex(i)[2:] for i in fin]
 print(fin)
 print(fin_hex)
