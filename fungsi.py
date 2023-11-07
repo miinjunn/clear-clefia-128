@@ -1,5 +1,6 @@
+# import galois
+
 # S-Box untuk F0
-import galois
 S0 = [0x57, 0x49, 0xd1, 0xc6, 0x2f, 0x33, 0x74, 0xfb,
       0x95, 0x6d, 0x82, 0xea, 0x0e, 0xb0, 0xa8, 0x1c,
       0x28, 0xd0, 0x4b, 0x92, 0x5c, 0xee, 0x85, 0xb1,
@@ -99,20 +100,20 @@ con128 = [0xf56b7aeb, 0x994a8a42, 0x96a4bd75, 0xfa854521,
           0x50b63150, 0x3c9757e7, 0x1052b098, 0x7c73b3a7]
 
 
-def m0_func(T0, T1, T2, T3):
-    y0 = T0 ^ (0x02 * T1) ^ (0X04 * T2) ^ (0X06 * T3)
-    y1 = (0X02 * T0) ^ (T1) ^ (0X06 * T2) ^ (0X04 * T3)
-    y2 = (0X04 * T0) ^ (0X06 * T1) ^ (T2) ^ (0X02 * T3)
-    y3 = (0X06 * T0) ^ (0X04 * T1) ^ (0X02 * T2) ^ (T3)
-    return y0, y1, y2, y3
+def redefine_con128(con128):
+    temp = [hex(i)[2:] for i in con128]
+    # temp = [i for i in temp]
 
+    con_128 = []
+    for i in temp:
+        n = 2
+        tiap_index = []
+        for j in range(0, len(i), n):  # split tiap n karakter
+            split_n = i[j:j+n]
+            tiap_index.append(int(split_n, base=16))    # mengubah jadi decimal
+        con_128.append(tiap_index)
+    return con_128
 
-def m1_func(T0, T1, T2, T3):
-    y0 = T0 ^ (0x08 & T1) ^ (0x02 & T2) ^ (0x0a & T3)
-    y1 = (0x08 & T0) ^ T1 ^ (0x0a & T2) ^ (0x02 & T3)
-    y2 = (0x02 & T0) ^ (0x0a & T1) ^ T2 ^ (0x08 & T3)
-    y3 = (0x0a & T0) ^ (0x02 & T1) ^ (0x08 & T2) ^ T3
-    return y0, y1, y2, y3
 
 # -------------------------------------------------------------------------------------------
 # def gFn(state, pre_state):        # gfn irreducible -> untuk AES
@@ -177,3 +178,74 @@ def m1_mix(state):
         hasil_GFN.append(gFn(state[0], M1[i*4]) ^ gFn(state[1], M1[i*4 + 1]) ^ gFn(
             state[2], M1[i*4 + 2]) ^ gFn(state[3], M1[i*4 + 3]))
     return hasil_GFN
+
+# -------------------------------------------------------------------------------------------
+# fungsi F0 dan F1
+
+
+def f0(T0: list, rk: list):
+    # (after key add)
+    T = [(rk[i] ^ T0[i]) for i in range(4)]
+    # hex
+    # T_hex = [hex(i)[2:] for i in T]
+
+    # sub-S1 untuk T (after S)
+    T[0] = S0[T[0]]
+    T[1] = S1[T[1]]
+    T[2] = S0[T[2]]
+    T[3] = S1[T[3]]
+    # hex
+    # T_hex = [hex(i)[2:] for i in T]
+
+    # (after M)
+    Y = [T[0], T[1], T[2], T[3]]
+    f0_output = m0_mix(Y)
+    # print(f"F1 output round-1: {f1_output}")
+
+    # hex
+    # f1_output = [hex(i)[2:] for i in f1_output]
+    return f0_output
+
+
+def f1(T2, rk):
+    # (after key add)
+    T = [(rk[i] ^ T2[i]) for i in range(4)]
+    # hex
+    # T_hex = [hex(i)[2:] for i in T]
+
+    # sub-S1 untuk T (after S)
+    T[0] = S1[T[0]]
+    T[1] = S0[T[1]]
+    T[2] = S1[T[2]]
+    T[3] = S0[T[3]]
+    # hex
+    # T_hex = [hex(i)[2:] for i in T]
+
+    # (after M)
+    Y = [T[0], T[1], T[2], T[3]]
+    f1_output = m1_mix(Y)
+    # print(f"F1 output round-1: {f1_output}")
+
+    # hex
+    # f1_output = [hex(i)[2:] for i in f1_output]
+    return f1_output
+
+
+# -------------------------------------------------------------------------------------------
+# fungsi transpose matrks
+matrix = [(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)]
+
+
+def trans(matrik):
+    trans_matrik = []
+    # for row in matrik:                          # print matrix sebelum di-transpose
+    #     print(row)
+    # print("\n")
+    # t_matrik = zip(*matrik)                   # return tuple
+    t_matrik = map(list, zip(*matrik))          # return list
+    for row in t_matrik:
+        trans_matrik.append(row)
+    return trans_matrik
+
+
+z = trans(matrix)
