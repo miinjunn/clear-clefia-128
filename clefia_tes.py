@@ -60,7 +60,7 @@ rk0 = [243, 230, 206, 249]
 # maka fungsi F1 pada round-0 adalah:
 
 
-def f0_jadi(T0, rk):
+def f0(T0, rk):
     # (after key add)
     T = [(rk[i] ^ T0[i]) for i in range(4)]
     # hex
@@ -84,7 +84,7 @@ def f0_jadi(T0, rk):
     return f0_output
 
 
-lane1 = f0_jadi(T0, rk0)
+lane1 = f0(T0, rk0)
 print(f"f0 after M (round-0): {lane1}")
 lane1_hex = [hex(i)[2:] for i in lane1]
 print(f"f0_hex after M (round-0): {lane1_hex}")
@@ -101,7 +101,7 @@ rk1 = [141, 247, 94, 56]
 # maka fungsi F1 pada round-0 adalah:
 
 
-def f1_jadi(T2, rk):
+def f1(T2, rk):
     # (after key add)
     T = [(rk[i] ^ T2[i]) for i in range(4)]
     # hex
@@ -125,8 +125,7 @@ def f1_jadi(T2, rk):
     return f1_output
 
 
-lane3 = f1_jadi(T2, rk1)
+lane3 = f1(T2, rk1)
 print(f"f1 after M (round-0): {lane3}")
 lane3_hex = [hex(i)[2:] for i in lane3]
 print(f"f1_hex after M (round-0): {lane3_hex}")
-
