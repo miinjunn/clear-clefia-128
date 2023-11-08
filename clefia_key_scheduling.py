@@ -58,7 +58,7 @@ print(f"x3: {x3}")
 
 def xor_(state1, state2):
     temp = []
-    for i in range(4):
+    for i in range(len(state1)):
         temp.append(state1[i] ^ state2[i])
     return temp
 
@@ -88,10 +88,14 @@ def gFn4_12(inp0, inp1, inp2, inp3):
 
 
 l0, l1, l2, l3 = gFn4_12(x0, x1, x2, x3)
-fin = l3 + l0 + l1 + l2                     # disusun spt ini karena pada round-12 tidak ada swap
-fin_hex = [hex(i)[2:] for i in fin]
-print(fin)
-print(fin_hex)
+# disusun spt ini karena pada round-12 tidak ada swap
+l_key = l3 + l0 + l1 + l2
+l_key_hex = [hex(i)[2:] for i in l_key]
+print("----------------------------------------------------------------------------------")
+print("L (intermediate key): ")
+print(l_key)
+print(l_key_hex)
+print("----------------------------------------------------------------------------------")
 
 
 # # round-2
@@ -104,3 +108,22 @@ print(fin_hex)
 # y12 = x22
 # y22 = x32
 # y32 = x02
+
+
+# ----------------------------------------------------------------------------------------
+# Expanding K and L
+
+keyz = x0 + x1 + x2 +x3
+print(f"key: {keyz}")
+
+# perlu bikin fungi double_swap -> sigma(l_key)
+def sigma(intermediate_key):
+    pass
+
+for i in range(9):
+    T = xor_(l_key, (con_128[4*i] + con_128[4*i + 1] +
+             con_128[4*i + 2] + con_128[4*i + 3]))
+    L = sigma(l_key)
+    # if i % 2 != 0:
+    #     T = xor_(T, keyz)
+    print(f"RK{i}: {T}")
