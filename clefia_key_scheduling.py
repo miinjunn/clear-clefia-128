@@ -113,17 +113,39 @@ print("-------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------
 # Expanding K and L
 
-keyz = x0 + x1 + x2 +x3
+keyz = x0 + x1 + x2 + x3
 print(f"key: {keyz}")
 
 # perlu bikin fungi double_swap -> sigma(l_key)
+
+
 def sigma(intermediate_key):
-    pass
+    split_bin = [bin(i)[2:] for i in intermediate_key]
+
+    temp = ''
+    for i in split_bin:
+        for j in range(8):
+            if len(i) < 8:
+                i = '0' + i
+        temp += i
+
+    y0, y1, y2, y3 = temp[:7], temp[7:64], temp[64:121], temp[121:128]
+
+    final = y1 + y3 + y0 + y2
+
+    bin_pisah = []
+    for i in range(16):
+        bin_pisah.append(final[i*8:i*8+8])
+
+    dec_pisah = [int(i, base=2) for i in bin_pisah]
+    return dec_pisah
+
 
 for i in range(9):
-    T = xor_(l_key, (con_128[4*i] + con_128[4*i + 1] +
-             con_128[4*i + 2] + con_128[4*i + 3]))
-    L = sigma(l_key)
-    # if i % 2 != 0:
-    #     T = xor_(T, keyz)
+    T = xor_(l_key, (con_128[4*i + 24] + con_128[4*i + 25] +
+             con_128[4*i + 26] + con_128[4*i + 27]))
+    l_key = sigma(l_key)
+    if i % 2 != 0:
+        T = xor_(T, keyz)
     print(f"RK{i}: {T}")
+
