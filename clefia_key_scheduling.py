@@ -41,10 +41,10 @@ for i in range(4):
     k_as_input.append(key[i*4:i*4+4])
 
 x0, x1, x2, x3 = k_as_input
-print(f"x0: {x0}")
-print(f"x1: {x1}")
-print(f"x2: {x2}")
-print(f"x3: {x3}")
+# print(f"x0: {x0}")
+# print(f"x1: {x1}")
+# print(f"x2: {x2}")
+# print(f"x3: {x3}")
 
 
 # ----------------------------------------------------------------------------------------
@@ -91,11 +91,11 @@ l0, l1, l2, l3 = gFn4_12(x0, x1, x2, x3)
 # disusun spt ini karena pada round-12 tidak ada swap
 l_key = l3 + l0 + l1 + l2
 l_key_hex = [hex(i)[2:] for i in l_key]
-print("----------------------------------------------------------------------------------")
-print("L (intermediate key): ")
-print(l_key)
-print(l_key_hex)
-print("----------------------------------------------------------------------------------")
+# print("----------------------------------------------------------------------------------")
+# print("L (intermediate key): ")
+# print(l_key)
+# print(l_key_hex)
+# print("----------------------------------------------------------------------------------")
 
 
 # # round-2
@@ -114,7 +114,7 @@ print("-------------------------------------------------------------------------
 # Expanding K and L
 
 keyz = x0 + x1 + x2 + x3
-print(f"key: {keyz}")
+# print(f"key: {keyz}")
 
 # perlu bikin fungi double_swap -> sigma(l_key)
 
@@ -151,11 +151,11 @@ for i in range(9):
     # print(f"RK{i}: {T}")
     # for k in range(len(T)):             # convert dec to hex
     #     T[k] = hex(T[k])[2:]
-    print(f"RK{i}: {T}")
+    # print(f"RK{i}: {T}")
     for j in range(4):
         rk.append(T[j*4: j*4+4])
 
 
-print(rk)
-for i in range(len(rk)):
-    print(f"rk{i}: {rk[i]}")
+# print(rk)
+# for i in range(len(rk)):
+#     print(f"rk{i}: {rk[i]}")
