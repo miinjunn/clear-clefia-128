@@ -207,7 +207,7 @@ def f0(T0: list, rk: list):
     return f0_output
 
 
-def f1(T2, rk):
+def f1(T2: list, rk: list):
     # (after key add)
     T = [(rk[i] ^ T2[i]) for i in range(4)]
     # hex
@@ -299,3 +299,90 @@ def trans(matrik):
 #     y0, y1, y2, y3 = M1_trans(T0, T1, T2, T3)
 #     y = y0 + y1 + y2 + y3
 #     return y
+
+# -------------------------------------------------------------------------------------------
+# Key Scheduling part:
+# Generate L from K
+def gFn4_12(wk, constant_value):
+    x0 = wk[0]
+    x1 = wk[1]
+    x2 = wk[2]
+    x3 = wk[3]
+    for i in range(12):
+
+        x1 = xor_(x1, (f0(x0, constant_value[2*i])))
+
+        x3 = xor_(x3, (f1(x2, constant_value[2*i+1])))
+
+        temp = x0
+        x0 = x1
+        x1 = x2
+        x2 = x3
+        x3 = temp
+    return x0, x1, x2, x3
+
+# expand L and K to produce 36 Round Key
+# Double Swap function:
+def sigma(intermediate_key):
+    split_bin = [bin(i)[2:] for i in intermediate_key]
+
+    temp = ''
+    for i in split_bin:
+        for j in range(8):
+            if len(i) < 8:
+                i = '0' + i
+        temp += i
+
+    y0, y1, y2, y3 = temp[:7], temp[7:64], temp[64:121], temp[121:128]
+
+    final = y1 + y3 + y0 + y2
+
+    bin_pisah = []
+    for i in range(16):
+        bin_pisah.append(final[i*8:i*8+8])
+
+    dec_pisah = [int(i, base=2) for i in bin_pisah]
+    return dec_pisah
+
+# generate RK function:
+def generate_rk(key,L, constant_value):
+    rk = []
+    for i in range(9):
+        T = xor_(L, (constant_value[4*i + 24] + constant_value[4*i +
+                 25] + constant_value[4*i + 26] + constant_value[4*i + 27]))
+        L = sigma(L)
+        if i % 2 != 0:
+            T = xor_(T, key)
+        # print(f"RK{i}: {T}")
+        # for k in range(len(T)):             # convert dec to hex
+        #     T[k] = hex(T[k])[2:]
+        # print(f"RK{i}: {T}")
+        for j in range(4):
+            rk.append(T[j*4: j*4+4])
+    return rk
+# -------------------------------------------------------------------------------------------
+# encrypt:
+def xor_(state1, state2):
+    temp = []
+    for i in range(len(state1)):
+        temp.append(state1[i] ^ state2[i])
+    return temp
+
+
+def gFn4_18(inp, wk, rk):
+    x0 = inp[0]
+    x1 = xor_(inp[1], wk[0])
+    x2 = inp[2]
+    x3 = xor_(inp[3], wk[1])
+    for i in range(18):
+
+        x1 = xor_(x1, (f0(x0, rk[2*i])))
+
+        x3 = xor_(x3, (f1(x2, rk[2*i+1])))
+
+        temp = x0
+        x0 = x1
+        x1 = x2
+        x2 = x3
+        x3 = temp
+    return x0, x1, x2, x3
