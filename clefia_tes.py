@@ -1,53 +1,5 @@
 from fungsi import S0, S1, M0, M1, m0_mix, m1_mix
-
-# Diffusion Matrices
-# y = M0 trans(T) adalah
-
-
-# def M0_trans(T0, T1, T2, T3):
-#     y0 = T0 ^ (0x02 * T1) ^ (0X04 * T2) ^ (0X06 * T3)
-#     y1 = (0X02 * T0) ^ (T1) ^ (0X06 * T2) ^ (0X04 * T3)
-#     y2 = (0X04 * T0) ^ (0X06 * T1) ^ (T2) ^ (0X02 * T3)
-#     y3 = (0X06 * T0) ^ (0X04 * T1) ^ (0X02 * T2) ^ (T3)
-#     return y0, y1, y2, y3
-
-# y = M1 trans(T) adalah
-
-
-# def M1_trans(T0, T1, T2, T3):
-#     y0 = T0 ^ (0x08 * T1) ^ (0x02 * T2) ^ (0x0a * T3)
-#     y1 = (0x08 * T0) ^ T1 ^ (0x0a * T2) ^ (0x02 * T3)
-#     y2 = (0x02 * T0) ^ (0x0a * T1) ^ T2 ^ (0x08 * T3)
-#     y3 = (0x0a * T0) ^ (0x02 * T1) ^ (0x08 * T2) ^ T3
-#     return y0, y1, y2, y3
-
-
-# input     : 32-bit round key RK, 32-bit data x,
-# output    : 32-bit data y
-
-# def F0(rk, x):
-#     T = rk ^ x
-#     T0 = S0[T0]
-#     T1 = S1[T1]
-#     T2 = S0[T2]
-#     T3 = S1[T3]
-#     # T = T0 + T1 + T2 + T3
-#     y0, y1, y2, y3 = M0_trans(T0, T1, T2, T3)
-#     y = y0 + y1 + y2 + y3
-#     return y
-
-
-# def F1(rk, x):
-#     T = rk ^ x
-#     T0 = S1[T0]
-#     T1 = S0[T1]
-#     T2 = S1[T2]
-#     T3 = S0[T3]
-#     # T = T0 + T1 + T2 + T3
-#     y0, y1, y2, y3 = M1_trans(T0, T1, T2, T3)
-#     y = y0 + y1 + y2 + y3
-#     return y
-
+from clefia_key_scheduling import rk, con_128
 
 # ------------------------------------------------------------------------------------------
 # x pada F0 dan F1 berukuran 32bit
@@ -91,6 +43,10 @@ print(f"f0_hex after M (round-0): {lane1_hex}")
 
 
 # ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
 # x pada F0 dan F1 berukuran 32bit
 # misal:
 # x  = 0x08090a0b
@@ -129,3 +85,71 @@ lane3 = f1(T2, rk1)
 print(f"f1 after M (round-0): {lane3}")
 lane3_hex = [hex(i)[2:] for i in lane3]
 print(f"f1_hex after M (round-0): {lane3_hex}")
+
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
+plaintext = [0x00, 0x01, 0x02, 0x03,
+             0x04, 0x05, 0x06, 0x07,
+             0x08, 0x09, 0x0a, 0x0b,
+             0x0c, 0x0d, 0x0e, 0x0f]
+
+plaintext = [int(hex(i)[2:], base=16) for i in plaintext]
+
+plain = []
+for i in range(4):
+    plain.append(plaintext[i*4:i*4+4])
+
+print(plain)
+# ----------------------------------------------------------------------------------------
+keytext = [0xff, 0xee, 0xdd, 0xcc,
+           0xbb, 0xaa, 0x99, 0x88,
+           0x77, 0x66, 0x55, 0x44,
+           0x33, 0x22, 0x11, 0x00]
+
+key = [int(hex(i)[2:], base=16) for i in keytext]
+# print(key)
+
+wk = []
+for i in range(4):
+    wk.append(key[i*4:i*4+4])
+
+print(wk)
+# ----------------------------------------------------------------------------------------
+
+
+def xor_(state1, state2):
+    temp = []
+    for i in range(len(state1)):
+        temp.append(state1[i] ^ state2[i])
+    return temp
+
+
+def gFn4_18(inp0, inp1, inp2, inp3):
+    x0 = inp0
+    x1 = xor_(inp1, wk[0])
+    x2 = inp2
+    x3 = xor_(inp3, wk[1])
+    for i in range(18):
+
+        x1 = xor_(x1, (f0(x0, rk[2*i])))
+
+        x3 = xor_(x3, (f1(x2, rk[2*i+1])))
+
+        temp = x0
+        x0 = x1
+        x1 = x2
+        x2 = x3
+        x3 = temp
+    return x0, x1, x2, x3
+
+
+c0, c1, c2, c3 = gFn4_18(plain[0], plain[1], plain[2], plain[3])
+
+# cipher = c0 + (xor_(c1, wk[2])) + c2 + (xor_(c3, wk[3]))
+cipher = c3 + (xor_(c0, wk[2])) + c1 + (xor_(c2, wk[3]))
+
+cipher_hex = [hex(i)[2:] for i in cipher]
+print(f"cipher_hex: {cipher_hex}")
