@@ -141,11 +141,21 @@ def sigma(intermediate_key):
     return dec_pisah
 
 
+rk = []
 for i in range(9):
     T = xor_(l_key, (con_128[4*i + 24] + con_128[4*i + 25] +
              con_128[4*i + 26] + con_128[4*i + 27]))
     l_key = sigma(l_key)
     if i % 2 != 0:
         T = xor_(T, keyz)
+    # print(f"RK{i}: {T}")
+    # for k in range(len(T)):             # convert dec to hex
+    #     T[k] = hex(T[k])[2:]
     print(f"RK{i}: {T}")
+    for j in range(4):
+        rk.append(T[j*4: j*4+4])
 
+
+print(rk)
+for i in range(len(rk)):
+    print(f"rk{i}: {rk[i]}")
