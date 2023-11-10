@@ -100,6 +100,17 @@ con128 = [0xf56b7aeb, 0x994a8a42, 0x96a4bd75, 0xfa854521,
           0x50b63150, 0x3c9757e7, 0x1052b098, 0x7c73b3a7]
 
 
+def break_input(inputan):
+    temp = []
+    input = [hex(ord(i))[2:] for i in inputan]      # convert ke hex
+    while len(input) < 16:                          # padd 00 jika char < 16
+        input.append("00")
+    input = [int(i, base=16) for i in input]        # convert ke dec
+    for i in range(4):                              # bagi menjadi 4 line
+        temp.append(input[i*4:i*4+4])
+    return temp
+
+
 def redefine_con128(con128):
     temp = [hex(i)[2:] for i in con128]
     # temp = [i for i in temp]
@@ -323,6 +334,8 @@ def gFn4_12(wk, constant_value):
 
 # expand L and K to produce 36 Round Key
 # Double Swap function:
+
+
 def sigma(intermediate_key):
     split_bin = [bin(i)[2:] for i in intermediate_key]
 
@@ -344,8 +357,9 @@ def sigma(intermediate_key):
     dec_pisah = [int(i, base=2) for i in bin_pisah]
     return dec_pisah
 
+
 # generate RK function:
-def generate_rk(key,L, constant_value):
+def generate_rk(key, L, constant_value):
     rk = []
     for i in range(9):
         T = xor_(L, (constant_value[4*i + 24] + constant_value[4*i +
@@ -360,6 +374,8 @@ def generate_rk(key,L, constant_value):
         for j in range(4):
             rk.append(T[j*4: j*4+4])
     return rk
+
+
 # -------------------------------------------------------------------------------------------
 # encrypt:
 def xor_(state1, state2):
