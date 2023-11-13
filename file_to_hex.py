@@ -66,9 +66,12 @@ split_16 = []
 for i in range(0, len(ss), 16):
     split_16.append(ss[i: i+16])
 
+print(split_16[:3])
 akan_diconvert = split_16
 
 
+# nantinya diganti dengan "enkripsi per block"
+# ---------------------------------------------------------------------------------------------
 def convert_per_i(state):
     temp = [hex(i)[2:] for i in state]
     temp2 = []
@@ -79,6 +82,8 @@ def convert_per_i(state):
     return temp2
 
 
+# nantinya diganti dengan "enkripsi semua, join hasil enkripsi kedalam 1 variable"
+# ---------------------------------------------------------------------------------------------
 def convert_semua(statex):
     semua = ''
     for i in range(len(statex)):
@@ -88,9 +93,9 @@ def convert_semua(statex):
     return semua
 
 
-sem = convert_semua(akan_diconvert)
-print(sem)
-print(len(sem))
+# sem = convert_semua(akan_diconvert)
+# print(sem)
+# print(len(sem))
 
-with open('baru.webp', 'wb') as fp:
-    fp.write(binascii.unhexlify(to_hex))
+# with open('baru.webp', 'wb') as fp:
+#     fp.write(binascii.unhexlify(to_hex))
