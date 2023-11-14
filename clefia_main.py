@@ -3,7 +3,11 @@ from fungsi import xor_, f0, f1, gFn4_18, break_input, con128, redefine_con128, 
 # 16 char
 plaintext = "abcdefghijkl"
 plain = break_input(plaintext)
-print(f"plaintext\t: {plaintext}")
+
+# plain: [[255, 251, 208, 68], [0, 0, 5, 84], [87, 208, 181, 101], [32, 0, 171, 170]]
+# plain = [[249, 240, 172, 176], [0, 25, 173, 145], [95, 249, 183, 128], [11, 62, 50, 44]]
+
+# print(f"plaintext\t: {plaintext}")
 print(f"plain break\t: {plain}")
 # -----------------~~~~~~-----------------
 border: str = "~~~~~~"
@@ -31,13 +35,20 @@ def encrypt(plain, key):
     # Expanding K and L to generate round-key
     keyz = key[0] + key[1] + key[2] + key[3]
     rk = generate_rk(key=keyz, L=l_key, constant_value=con_128)
+
+    # menampilkan RK[i]:
     for i in range(len(rk)):
         print(f"rk{i} \t\t: {rk[i]}")
 
     # generate ciphertext
     c0, c1, c2, c3 = gFn4_18(plain, key, rk)
     cipher = c3 + (xor_(c0, key[2])) + c1 + (xor_(c2, key[3]))
-    cipher_hex = [hex(i)[2:] for i in cipher]
+    cipher_hex = []
+    for i in cipher:
+        cek = hex(i)[2:]
+        if len(cek) == 1:
+            cek = '0' + cek
+        cipher_hex.append(cek)
     return cipher_hex
 
 

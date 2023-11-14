@@ -39,8 +39,8 @@ l0, l1, l2, l3 = gFn4_12(wk, con_128)
 l_key = l3 + l0 + l1 + l2
 l_key_hex = [hex(i)[2:] for i in l_key]
 # -------------------------------------------
-print(f"L: {l_key}")
-print(f"L (hex): {l_key_hex}")
+# print(f"L: {l_key}")
+# print(f"L (hex): {l_key_hex}")
 
 
 # ----------------------------------------------------------------------------------------
@@ -52,5 +52,5 @@ keyz = wk[0] + wk[1] + wk[2] + wk[3]
 # Generate RK
 rk = generate_rk(key=keyz , L=l_key, constant_value=con_128)
 # print(rk)
-for i in range(len(rk)):
-    print(f"rk{i}: {rk[i]}")
+# for i in range(len(rk)):
+#     print(f"rk{i}: {rk[i]}")

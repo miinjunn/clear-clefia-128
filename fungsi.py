@@ -200,7 +200,7 @@ def f0(T0: list, rk: list):
     # hex
     # T_hex = [hex(i)[2:] for i in T]
 
-    # sub-S1 untuk T (after S)
+    # sub-S0 untuk T (after S)
     T[0] = S0[T[0]]
     T[1] = S1[T[1]]
     T[2] = S0[T[2]]
@@ -385,11 +385,11 @@ def xor_(state1, state2):
     return temp
 
 
-def gFn4_18(inp, wk, rk):
+def gFn4_18(inp, key, rk):
     x0 = inp[0]
-    x1 = xor_(inp[1], wk[0])
+    x1 = xor_(inp[1], key[0])
     x2 = inp[2]
-    x3 = xor_(inp[3], wk[1])
+    x3 = xor_(inp[3], key[1])
     for i in range(18):
 
         x1 = xor_(x1, (f0(x0, rk[2*i])))
@@ -401,4 +401,23 @@ def gFn4_18(inp, wk, rk):
         x1 = x2
         x2 = x3
         x3 = temp
+    return x0, x1, x2, x3
+
+
+def gFn4_inv_18(inp, key, rk):
+    x0 = inp[0]
+    x1 = xor_(inp[1], key[2])
+    x2 = inp[2]
+    x3 = xor_(inp[3], key[3])
+    for i in range(18):
+
+        x1 = xor_(x1, (f0(x0, rk[2*(18-i)-2])))
+
+        x3 = xor_(x3, (f1(x2, rk[2*(18-i)-1])))
+
+        temp = x3
+        x3 = x2
+        x2 = x1
+        x1 = x0
+        x0 = temp
     return x0, x1, x2, x3

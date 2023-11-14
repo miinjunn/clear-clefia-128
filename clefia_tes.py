@@ -79,4 +79,5 @@ print(f"f1_hex after M (round-0): {lane3_hex}")
 c0, c1, c2, c3 = gFn4_18(plain, wk, rk)
 cipher = c3 + (xor_(c0, wk[2])) + c1 + (xor_(c2, wk[3]))
 cipher_hex = [hex(i)[2:] for i in cipher]
+print(f"cipher: {cipher}")
 print(f"cipher_hex: {cipher_hex}")
