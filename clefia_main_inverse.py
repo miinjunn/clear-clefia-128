@@ -1,6 +1,13 @@
-from fungsi import gFn4_12, generate_rk, redefine_con128, con128, xor_, f0, f1
+from fungsi import xor_, f0, f1
 from clefia_key_scheduling import rk
 
+# plaintext                00010203 04050607 08090a0b 0c0d0e0f
+# key                      ffeeddcc bbaa9988 77665544 33221100
+# L                        8f89a61b 9db9d0f3 93e65627 da0d027e
+# ciphertext               de2bf2fd 9b74aacd f1298555 459494fd
+
+
+# ----------------------------------------------------------------------------------------
 cipher = [[222, 43, 242, 253], [155, 116, 170, 205],
           [241, 41, 133, 85], [69, 148, 148, 253]]
 key = [[255, 238, 221, 204], [187, 170, 153, 136],
@@ -49,6 +56,7 @@ def decypt(cipher, key):
 
 
 dec = decypt(cipher=cipher, key=key)
-print(dec)
+print(f"plaintext \t: {dec}")
+print(f"len plain \t: {len(dec)}")
 for i in dec:
     print(i, end='')

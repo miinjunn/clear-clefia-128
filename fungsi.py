@@ -113,8 +113,6 @@ def break_input(inputan):
 
 def redefine_con128(con128):
     temp = [hex(i)[2:] for i in con128]
-    # temp = [i for i in temp]
-
     con_128 = []
     for i in temp:
         n = 2
@@ -173,7 +171,7 @@ def gFn(state, pre_matrix):     # gfn primitive -> untuk CLEFIA
     return p & 0xff
 
 
-# untuk M0
+# function: M0
 def m0_mix(state):
     hasil_GFN = []
     for i in range(4):
@@ -182,7 +180,7 @@ def m0_mix(state):
     return hasil_GFN
 
 
-# untuk M1
+# function: M1
 def m1_mix(state):
     hasil_GFN = []
     for i in range(4):
@@ -190,14 +188,13 @@ def m1_mix(state):
             state[2], M1[i*4 + 2]) ^ gFn(state[3], M1[i*4 + 3]))
     return hasil_GFN
 
+
 # -------------------------------------------------------------------------------------------
 # fungsi F0 dan F1
-
-
 def f0(T0: list, rk: list):
     # (after key add)
     T = [(rk[i] ^ T0[i]) for i in range(4)]
-    # hex
+    # hex (jika ingin lihat saja):
     # T_hex = [hex(i)[2:] for i in T]
 
     # sub-S0 untuk T (after S)
@@ -211,105 +208,28 @@ def f0(T0: list, rk: list):
     # (after M)
     Y = [T[0], T[1], T[2], T[3]]
     f0_output = m0_mix(Y)
-    # print(f"F1 output round-1: {f1_output}")
 
     # hex
-    # f1_output = [hex(i)[2:] for i in f1_output]
+    # f0_output = [hex(i)[2:] for i in f0_output]
     return f0_output
 
 
 def f1(T2: list, rk: list):
     # (after key add)
     T = [(rk[i] ^ T2[i]) for i in range(4)]
-    # hex
-    # T_hex = [hex(i)[2:] for i in T]
 
     # sub-S1 untuk T (after S)
     T[0] = S1[T[0]]
     T[1] = S0[T[1]]
     T[2] = S1[T[2]]
     T[3] = S0[T[3]]
-    # hex
-    # T_hex = [hex(i)[2:] for i in T]
 
     # (after M)
     Y = [T[0], T[1], T[2], T[3]]
     f1_output = m1_mix(Y)
-    # print(f"F1 output round-1: {f1_output}")
 
-    # hex
-    # f1_output = [hex(i)[2:] for i in f1_output]
     return f1_output
 
-
-# -------------------------------------------------------------------------------------------
-# fungsi transpose matrks
-# matrix = [(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)]
-
-
-def trans(matrik):
-    trans_matrik = []
-    # for row in matrik:                          # print matrix sebelum di-transpose
-    #     print(row)
-    # print("\n")
-    # t_matrik = zip(*matrik)                   # return tuple
-    t_matrik = map(list, zip(*matrik))          # return list
-    for row in t_matrik:
-        trans_matrik.append(row)
-    return trans_matrik
-
-
-# z = trans(matrix)
-
-# -------------------------------------------------------------------------------------------
-
-# Diffusion Matrices
-# y = M0 trans(T) adalah
-
-
-# def M0_trans(T0, T1, T2, T3):
-#     y0 = T0 ^ (0x02 * T1) ^ (0X04 * T2) ^ (0X06 * T3)
-#     y1 = (0X02 * T0) ^ (T1) ^ (0X06 * T2) ^ (0X04 * T3)
-#     y2 = (0X04 * T0) ^ (0X06 * T1) ^ (T2) ^ (0X02 * T3)
-#     y3 = (0X06 * T0) ^ (0X04 * T1) ^ (0X02 * T2) ^ (T3)
-#     return y0, y1, y2, y3
-
-# y = M1 trans(T) adalah
-
-
-# def M1_trans(T0, T1, T2, T3):
-#     y0 = T0 ^ (0x08 * T1) ^ (0x02 * T2) ^ (0x0a * T3)
-#     y1 = (0x08 * T0) ^ T1 ^ (0x0a * T2) ^ (0x02 * T3)
-#     y2 = (0x02 * T0) ^ (0x0a * T1) ^ T2 ^ (0x08 * T3)
-#     y3 = (0x0a * T0) ^ (0x02 * T1) ^ (0x08 * T2) ^ T3
-#     return y0, y1, y2, y3
-
-
-# input     : 32-bit round key RK, 32-bit data x,
-# output    : 32-bit data y
-
-# def F0(rk, x):
-#     T = rk ^ x
-#     T0 = S0[T0]
-#     T1 = S1[T1]
-#     T2 = S0[T2]
-#     T3 = S1[T3]
-#     # T = T0 + T1 + T2 + T3
-#     y0, y1, y2, y3 = M0_trans(T0, T1, T2, T3)
-#     y = y0 + y1 + y2 + y3
-#     return y
-
-
-# def F1(rk, x):
-#     T = rk ^ x
-#     T0 = S1[T0]
-#     T1 = S0[T1]
-#     T2 = S1[T2]
-#     T3 = S0[T3]
-#     # T = T0 + T1 + T2 + T3
-#     y0, y1, y2, y3 = M1_trans(T0, T1, T2, T3)
-#     y = y0 + y1 + y2 + y3
-#     return y
 
 # -------------------------------------------------------------------------------------------
 # Key Scheduling part:
@@ -332,22 +252,18 @@ def gFn4_12(wk, constant_value):
         x3 = temp
     return x0, x1, x2, x3
 
+
 # expand L and K to produce 36 Round Key
 # Double Swap function:
-
-
 def sigma(intermediate_key):
     split_bin = [bin(i)[2:] for i in intermediate_key]
-
     temp = ''
     for i in split_bin:
         for j in range(8):
             if len(i) < 8:
                 i = '0' + i
         temp += i
-
     y0, y1, y2, y3 = temp[:7], temp[7:64], temp[64:121], temp[121:128]
-
     final = y1 + y3 + y0 + y2
 
     bin_pisah = []
@@ -367,17 +283,16 @@ def generate_rk(key, L, constant_value):
         L = sigma(L)
         if i % 2 != 0:
             T = xor_(T, key)
-        # print(f"RK{i}: {T}")
-        # for k in range(len(T)):             # convert dec to hex
+
+        # for k in range(len(T)):             # convert dec to hex (jika ingin lihat saja), comment lg jika sudah selesai
         #     T[k] = hex(T[k])[2:]
-        # print(f"RK{i}: {T}")
+            
         for j in range(4):
             rk.append(T[j*4: j*4+4])
     return rk
 
 
 # -------------------------------------------------------------------------------------------
-# encrypt:
 def xor_(state1, state2):
     temp = []
     for i in range(len(state1)):
@@ -385,6 +300,7 @@ def xor_(state1, state2):
     return temp
 
 
+# enkripsi
 def gFn4_18(inp, key, rk):
     x0 = inp[0]
     x1 = xor_(inp[1], key[0])
@@ -404,6 +320,7 @@ def gFn4_18(inp, key, rk):
     return x0, x1, x2, x3
 
 
+# dekripsi
 def gFn4_inv_18(inp, key, rk):
     x0 = inp[0]
     x1 = xor_(inp[1], key[2])

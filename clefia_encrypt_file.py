@@ -1,13 +1,14 @@
 import binascii
 import time
-from fungsi import gFn4_12, generate_rk, gFn4_18, xor_, redefine_con128, con128, break_input
+from fungsi import con128, redefine_con128, generate_rk, xor_, gFn4_12, break_input, gFn4_18
 
 start = time.time()
+
 # key
 key_user = "two one tes12"
 key = break_input(key_user)
 print(f"key user\t: {key_user}")
-# print(f"key\t\t: {key}")
+print(f"key\t\t: {key}")
 
 
 # file to hex
@@ -22,7 +23,7 @@ print(f"panjang decode: {len(to_hex)}")
 
 
 # function: split each hex
-def split(state):
+def split_each_hex(state):
     split_2 = []
     for i in range(0, len(state), 2):
         split_2.append(state[i:i+2])
@@ -30,7 +31,7 @@ def split(state):
 
 
 # split each hex
-to_each_hex = split(to_hex)
+to_each_hex = split_each_hex(to_hex)
 
 # convert each hex into dec
 to_each_dec = [int(i, base=16) for i in to_each_hex]
@@ -41,7 +42,10 @@ for i in range(0, len(to_each_dec), 16):
     split_16.append(to_each_dec[i: i+16])
 
 
+akan_diconvert = split_16
 # --------------------------------------------------------------------------------------------------------
+
+
 def break_input_into_4split(inputan):
     temp = []
     while len(inputan) < 16:                          # padd 0 jika item < 16
@@ -51,29 +55,10 @@ def break_input_into_4split(inputan):
     return temp
 
 
-# --------------------------------------------------------------------------------------------------------
-# print(f"split: {split_16[-1]}")
-akan_diconvert = split_16
-
-
-# nantinya diganti dengan "enkripsi per block"
-# ---------------------------------------------------------------------------------------------
-# function: convert tiap block menjadi hex
-# def convert_per_x(state):
-#     temp = []
-#     for i in state:
-#         cek = hex(i)[2:]
-#         if len(cek) == 1:
-#             cek = '0' + cek
-#         temp.append(cek)
-#     return temp
-
-
 # get Constant Value
 con_128 = redefine_con128(con128)
 
 
-# ---------------------------------------------------------------------------------------------
 # function: enkripsi per block
 def encrypt(plaintext, key):
     plain = break_input_into_4split(plaintext)
@@ -91,6 +76,7 @@ def encrypt(plaintext, key):
     c0, c1, c2, c3 = gFn4_18(plain, key, rk)
     cipher = c3 + (xor_(c0, key[2])) + c1 + (xor_(c2, key[3]))
 
+    # convert output menjadi hex, lalu add 0 jika hex hanya 1 charakter, ex: 'a' -> '0a'
     cipher_hex = []
     for i in cipher:
         cek = hex(i)[2:]
@@ -101,7 +87,6 @@ def encrypt(plaintext, key):
     return cipher_hex
 
 
-# ---------------------------------------------------------------------------------------------
 # function: enkripsi semua block, join hasil enkripsi kedalam 1 variable
 def convert_file(state):
     semua = ''
@@ -112,17 +97,16 @@ def convert_file(state):
     return semua
 
 
-sem = convert_file(akan_diconvert)
+conv = convert_file(akan_diconvert)
 # print(sem)
-print(len(sem))
-# print(type(sem))
-# print(sem[:32])
+print(f"panjang enkrip file: {len(conv)}")
+print(type(conv))
 
 
 # ---------------------------------------------------------------------------------------------
 # hex to file
-with open('hasil', 'wb') as fp:
-    fp.write(binascii.unhexlify(sem))
+with open('enkrip/hasil', 'wb') as fp:
+    fp.write(binascii.unhexlify(conv))
 
 
 end = time.time()

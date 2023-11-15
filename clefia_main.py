@@ -1,36 +1,45 @@
-from fungsi import xor_, f0, f1, gFn4_18, break_input, con128, redefine_con128, generate_rk, gFn4_12, gFn4_18
+from fungsi import xor_, gFn4_18, break_input, con128, redefine_con128, generate_rk, gFn4_12, gFn4_18
 
+# plaintext                00010203 04050607 08090a0b 0c0d0e0f
+# key                      ffeeddcc bbaa9988 77665544 33221100
+# L                        8f89a61b 9db9d0f3 93e65627 da0d027e
+# ciphertext               de2bf2fd 9b74aacd f1298555 459494fd
+
+
+# ----------------------------------------------------------------------------------------
+plain = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+key = [[255, 238, 221, 204], [187, 170, 153, 136],
+       [119, 102, 85, 68], [51, 34, 17, 0]]
+
+# tes custom plain dan key:
+# -----------------------------------------
 # 16 char
-plaintext = "abcdefghijkl"
-plain = break_input(plaintext)
-
-# plain: [[255, 251, 208, 68], [0, 0, 5, 84], [87, 208, 181, 101], [32, 0, 171, 170]]
-# plain = [[249, 240, 172, 176], [0, 25, 173, 145], [95, 249, 183, 128], [11, 62, 50, 44]]
-
+# plaintext = "abcdefghijkl"
+# plain = break_input(plaintext)
 # print(f"plaintext\t: {plaintext}")
-print(f"plain break\t: {plain}")
-# -----------------~~~~~~-----------------
-border: str = "~~~~~~"
-print(f"{border:-^40}")
-# -----------------~~~~~~-----------------
+# print(f"plain break\t: {plain}")
+
+# -----------------------------------------
 # 16 char
-key_user = "two one tes12"
-key = break_input(key_user)
-print(f"key user\t: {key_user}")
-print(f"key\t\t: {key}")
+# key_user = "two one tes12"
+# key = break_input(key_user)
+# print(f"key user\t: {key_user}")
+# print(f"key\t\t: {key}")
 
 # get Constant Value
 con_128 = redefine_con128(con128)
 
 
-# -----------------~~~~~~-----------------
+# -----------------------------------------
 # create ENC-functionF
 def encrypt(plain, key):
 
     # generate L
     l0, l1, l2, l3 = gFn4_12(key, con_128)
     l_key = l3 + l0 + l1 + l2
+    l_key_hex = [hex(i)[2:] for i in l_key]
     print(f"L \t\t: {l_key}")
+    print(f"L_hex \t\t: {l_key_hex}")
 
     # Expanding K and L to generate round-key
     keyz = key[0] + key[1] + key[2] + key[3]
@@ -52,10 +61,13 @@ def encrypt(plain, key):
     return cipher_hex
 
 
-# -----------------~~~~~~-----------------F
-print(f"{border:-^40}")
+# -----------------------------------------
 enc = encrypt(plain=plain, key=key)
 print(f"ciphertext \t: {enc}")
 print(f"len cipher \t: {len(enc)}")
+
+enc_int = [int(i, base=16) for i in enc]
+print(f"cip_int \t: {enc_int}")
+
 for i in enc:
     print(i, end='')
