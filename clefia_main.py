@@ -7,24 +7,34 @@ from fungsi import xor_, gFn4_18, break_input, con128, redefine_con128, generate
 
 
 # ----------------------------------------------------------------------------------------
-plain = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
-key = [[255, 238, 221, 204], [187, 170, 153, 136],
-       [119, 102, 85, 68], [51, 34, 17, 0]]
+# plain = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+# key = [[255, 238, 221, 204], [187, 170, 153, 136],
+#        [119, 102, 85, 68], [51, 34, 17, 0]]
 
 # tes custom plain dan key:
 # -----------------------------------------
 # 16 char
-# plaintext = "abcdefghijkl"
-# plain = break_input(plaintext)
-# print(f"plaintext\t: {plaintext}")
-# print(f"plain break\t: {plain}")
+plaintext = "abcdefghijkl"
+plain = break_input(plaintext)
+print(f"plaintext\t: {plaintext}")
+print(f"plain break\t: {plain}\n")
 
 # -----------------------------------------
 # 16 char
-# key_user = "two one tes12"
-# key = break_input(key_user)
-# print(f"key user\t: {key_user}")
-# print(f"key\t\t: {key}")
+key_user = "two one halo tes"
+key = break_input(key_user)
+keyhex = [hex(ord(i))[2:] for i in key_user]
+print(f"key user\t: {key_user}")
+print(f"len key user\t: {len(key_user)}")
+print(f"key\t\t: {key}")
+print(f"key_hex \t: {keyhex}")
+keyhexx = ''
+for i in keyhex:
+    keyhexx += i
+
+print(f"key_hex \t: {keyhexx}\n")
+
+    
 
 # get Constant Value
 con_128 = redefine_con128(con128)
