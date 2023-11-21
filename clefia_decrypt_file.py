@@ -73,7 +73,7 @@ def decypt(ciphertext, key):
     cipher = break_input_into_4split(ciphertext)
 
     # generate plaintext
-    t0, t1, t2, t3 = gFn4_inv_18(inp=cipher, key=key, rk=rk)
+    t0, t1, t2, t3 = gFn4_inv_18(inp=cipher, wk=key, rk=rk)
     plain = t1 + xor_(t2, key[0]) + t3 + xor_(t0, key[1])
 
     # convert output menjadi hex, lalu add 0 jika hex hanya 1 char, ex: 'a' -> '0a'
