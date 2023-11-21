@@ -301,11 +301,11 @@ def xor_(state1, state2):
 
 
 # enkripsi
-def gFn4_18(inp, key, rk):
+def gFn4_18(inp, wk, rk):
     x0 = inp[0]
-    x1 = xor_(inp[1], key[0])
+    x1 = xor_(inp[1], wk[0])
     x2 = inp[2]
-    x3 = xor_(inp[3], key[1])
+    x3 = xor_(inp[3], wk[1])
     for i in range(18):
 
         x1 = xor_(x1, (f0(x0, rk[2*i])))
@@ -321,11 +321,11 @@ def gFn4_18(inp, key, rk):
 
 
 # dekripsi
-def gFn4_inv_18(inp, key, rk):
+def gFn4_inv_18(inp, wk, rk):
     x0 = inp[0]
-    x1 = xor_(inp[1], key[2])
+    x1 = xor_(inp[1], wk[2])
     x2 = inp[2]
-    x3 = xor_(inp[3], key[3])
+    x3 = xor_(inp[3], wk[3])
     for i in range(18):
 
         x1 = xor_(x1, (f0(x0, rk[2*(18-i)-2])))
