@@ -234,11 +234,11 @@ def f1(T2: list, rk: list):
 # -------------------------------------------------------------------------------------------
 # Key Scheduling part:
 # Generate L from K
-def gFn4_12(wk, constant_value):
-    x0 = wk[0]
-    x1 = wk[1]
-    x2 = wk[2]
-    x3 = wk[3]
+def gFn4_12(key, constant_value):
+    x0 = key[0]
+    x1 = key[1]
+    x2 = key[2]
+    x3 = key[3]
     for i in range(12):
 
         x1 = xor_(x1, (f0(x0, constant_value[2*i])))
