@@ -58,19 +58,19 @@ def break_input_into_4split(inputan):
 # get Constant Value
 con_128 = redefine_con128(con128)
 
+# generate L
+l0, l1, l2, l3 = gFn4_12(key, con_128)
+l_key = l3 + l0 + l1 + l2
+# print(f"L \t\t: {l_key}")
+
+# Expanding K and L to generate round-key
+keyz = key[0] + key[1] + key[2] + key[3]
+rk = generate_rk(key=keyz, L=l_key, constant_value=con_128)
+
 
 # function: enkripsi per block
 def encrypt(plaintext, key):
     plain = break_input_into_4split(plaintext)
-
-    # generate L
-    l0, l1, l2, l3 = gFn4_12(key, con_128)
-    l_key = l3 + l0 + l1 + l2
-    # print(f"L \t\t: {l_key}")
-
-    # Expanding K and L to generate round-key
-    keyz = key[0] + key[1] + key[2] + key[3]
-    rk = generate_rk(key=keyz, L=l_key, constant_value=con_128)
 
     # generate ciphertext
     c0, c1, c2, c3 = gFn4_18(plain, key, rk)
@@ -105,9 +105,18 @@ print(type(conv))
 
 # ---------------------------------------------------------------------------------------------
 # hex to file
-with open('enkrip/hasil', 'wb') as fp:
+with open('enkrip/hasil.mp3', 'wb') as fp:
     fp.write(binascii.unhexlify(conv))
 
 
 end = time.time()
 print("time execution:", (end-start), "secs")
+
+
+# ---------------------------------------------------------------------------------------------
+# tes scenario:
+# generate rk dalam fungsi enc:
+# waktu: 6.6 - 7 secs
+
+# generate rk diluar fungsi enc:
+# waktu: 2.98 secs - 3.2 secs
