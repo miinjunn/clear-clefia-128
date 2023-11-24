@@ -1,5 +1,5 @@
 from fungsi import xor_, f0, f1
-from clefia_key_scheduling import rk
+from clefia_key_scheduling import rk        #import karena key sama
 
 # plaintext                00010203 04050607 08090a0b 0c0d0e0f
 # key                      ffeeddcc bbaa9988 77665544 33221100
