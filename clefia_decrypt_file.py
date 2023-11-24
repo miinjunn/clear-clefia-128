@@ -12,7 +12,7 @@ print(f"key\t\t: {key}")
 
 
 # file to hex
-with open('enkrip/hasil', 'rb') as fp:
+with open('enkrip/hasil.mp3', 'rb') as fp:
     hexstring = binascii.hexlify(fp.read())
 
 print(f"panjang file: {len(hexstring)}")
