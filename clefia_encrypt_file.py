@@ -1,8 +1,8 @@
 import binascii
-import time
+# import time
 from fungsi import con128, redefine_con128, generate_rk, xor_, gFn4_12, break_input, gFn4_18
 
-start = time.time()
+# start = time.time()
 
 # key
 key_user = "two one tes12"
@@ -109,8 +109,8 @@ with open('enkrip/hasil.mp3', 'wb') as fp:
     fp.write(binascii.unhexlify(conv))
 
 
-end = time.time()
-print("time execution:", (end-start), "secs")
+# end = time.time()
+# print("time execution:", (end-start), "secs")
 
 
 # ---------------------------------------------------------------------------------------------
