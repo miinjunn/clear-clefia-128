@@ -14,6 +14,7 @@ from fungsi import xor_, gFn4_18, break_input, con128, redefine_con128, generate
 # tes custom plain dan key:
 # -----------------------------------------
 # 16 char
+# plaintext = "526455"
 plaintext = "abcdefghijkl"
 plain = break_input(plaintext)
 print(f"plaintext\t: {plaintext}")
@@ -21,6 +22,7 @@ print(f"plain break\t: {plain}\n")
 
 # -----------------------------------------
 # 16 char
+# key_user = "mun12311"
 key_user = "two one halo tes"
 key = break_input(key_user)
 keyhex = [hex(ord(i))[2:] for i in key_user]
@@ -41,7 +43,7 @@ con_128 = redefine_con128(con128)
 
 
 # -----------------------------------------
-# create ENC-functionF
+# create ENC-function
 def encrypt(plain, key):
 
     # generate L
